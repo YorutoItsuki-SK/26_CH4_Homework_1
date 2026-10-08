@@ -21,7 +21,7 @@ public:
 	virtual void NativeDestruct() override;
 
 protected:
-	UPROPERTY(meta = (BindeWidget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UEditableTextBox> EditableTextBox_ChatInput;
 
 protected:

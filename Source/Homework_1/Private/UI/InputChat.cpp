@@ -5,6 +5,8 @@
 
 #include "Components/EditableTextBox.h"
 
+#include "Player/BaseBallPlayerController.h"
+
 void UInputChat::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -25,4 +27,15 @@ void UInputChat::NativeDestruct()
 
 void UInputChat::OnChatCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
+	if (!(CommitMethod == ETextCommit::OnEnter)) return;
+
+	APlayerController* OwningPC = GetOwningPlayer();
+	if (!OwningPC) return;
+
+	ABaseBallPlayerController* BBPC = Cast<ABaseBallPlayerController>(OwningPC);
+	if (!BBPC) return;
+
+	BBPC->ServerRPCSendMessage(Text.ToString());
+
+	EditableTextBox_ChatInput->SetText(FText());
 }
