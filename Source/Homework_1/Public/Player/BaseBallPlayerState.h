@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -13,5 +13,13 @@ UCLASS()
 class HOMEWORK_1_API ABaseBallPlayerState : public APlayerState
 {
 	GENERATED_BODY()
+
+public:
+	ABaseBallPlayerState();
+
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 	
+public:
+	UPROPERTY(Replicated)
+	int32 Uid;
 };
