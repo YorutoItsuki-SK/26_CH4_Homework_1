@@ -169,10 +169,14 @@ FBaseBallResult ABaseBallGameMode::GetBaseBallResult(const int32& GuessNumber)
 	return Result;
 }
 
-void ABaseBallGameMode::SendChatMessage(FChatMessage& NewChatMessage)
+FString ABaseBallGameMode::GetResultString(const FBaseBallResult& Result)
 {
-	if (!BBGS) {
-		UE_LOG(LogTemp, Error, TEXT("ABaseBallGameMode::SendChatMessage, GameState is Null"));
+	if (Result.Strike == 0 && Result.Ball == 0) {
+		return TEXT("Out");
+	}
+	return FString::Printf(TEXT(" [ %d S %d B ]"), Result.Strike, Result.Ball);
+}
+
 void ABaseBallGameMode::TurnChange(const int32& CurreuntUid)
 {
 	FChatMessage TurnChangeMessage;
