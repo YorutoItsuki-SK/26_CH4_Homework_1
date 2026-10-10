@@ -152,9 +152,16 @@ void ABaseBallGameMode::SendChatMessage(FChatMessage& NewChatMessage)
 	BBGS->CurrentChat = NewChatMessage;
 }
 
-int32 ABaseBallGameMode::GeneratedSecretNumber()
+bool ABaseBallGameMode::IsGameContinue()
 {
-	return 0;
+	bool bIsReset = false;
+	for (const auto& Itr : PlayerChance) {
+		if (Itr.Value < MaxChance) {
+			bIsReset = true;
+			break;
+		}
+	}
+	return bIsReset;
 }
 
 void ABaseBallGameMode::ResetGame()
