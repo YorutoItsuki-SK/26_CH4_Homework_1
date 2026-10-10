@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+#include "Context/Chat.h"
 #include "BaseBallGameMode.generated.h"
 
 USTRUCT(BlueprintType)
@@ -19,9 +20,6 @@ struct FBaseBallResult
 };
 
 class ABaseBallPlayerController;
-class ABaseBallGameState;
-
-struct FChatMessage;
 
 /**
  * 
@@ -39,22 +37,47 @@ public:
 	void BroadcastNewChat(ABaseBallPlayerController* InChattingPlayerController, const FString& InChatMessageString);
 
 protected:
+	UPROPERTY()
 	TSet<TObjectPtr<ABaseBallPlayerController>> AllPlayerControllers;
+	
+	TArray<int32> PlayerUids;
 
-	int32 Uid;
+	TMap<int32, int32> PlayerChance;
+
+	int32 MaxChance = 3;
+
+	int32 MaxSecretNumberLength = 3;
+
+	int32 TurnUid = 0;
+
+	int32 Uid = 0;
 
 	int32 SecretNumber;
 
-	UPROPERTY()
-	TObjectPtr<ABaseBallGameState> BBGS;
+	TSet<int32> SecretNumberSet;
 
 protected:
 	virtual void BeginPlay() override;
 
 protected:
+
 	void SendChatMessage(FChatMessage& NewChatMessage);
+
+	void SendNoticeMessage(const FText& InNotice);
 
 	int32 GeneratedSecretNumber();
 
 	bool IsGuessNumberString(const FString& InNumberString);
+
+	void ProcessGuessRequest(ABaseBallPlayerController* InChattingPlayerController, const int32& GuessNumber);
+
+	FBaseBallResult GetBaseBallResult(const int32& GuessNumber);
+
+	FString GetResultString(const FBaseBallResult& Result);
+
+	void TurnChange(const int32& CurreuntUid);
+
+	bool IsGameContinue();
+
+	void ResetGame();
 };
