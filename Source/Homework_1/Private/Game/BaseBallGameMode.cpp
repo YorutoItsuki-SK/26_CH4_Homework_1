@@ -86,6 +86,14 @@ void ABaseBallGameMode::BroadcastNewChat(ABaseBallPlayerController* InChattingPl
 
 	ProcessGuessRequest(InChattingPlayerController, FCString::Atoi(*InChatMessageString));
 }
+
+void ABaseBallGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SecretNumber = GeneratedSecretNumber();
+}
+
 void ABaseBallGameMode::SendChatMessage(FChatMessage& NewChatMessage)
 {
 	for (ABaseBallPlayerController* BBPC : AllPlayerControllers) {
