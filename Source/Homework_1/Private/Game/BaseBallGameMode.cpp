@@ -138,11 +138,56 @@ bool ABaseBallGameMode::IsGuessNumberString(const FString& InNumberString)
 
 	return true;
 }
+
+void ABaseBallGameMode::ProcessGuessRequest(ABaseBallPlayerController* InChattingPlayerController, const int32& GuessNumber)
+{
+	ABaseBallPlayerState* BBPS = InChattingPlayerController->GetPlayerState<ABaseBallPlayerState>();
+	if (!BBPS) return;
+
+	int32 RequestUid = BBPS->Uid;
+
 	FChatMessage NewChatMessage;
+
+	if (!PlayerChance.Contains(RequestUid)) {
+		NewChatMessage.Time = FDateTime::Now();
+		NewChatMessage.Sender = TEXT("Server");
+		NewChatMessage.Message = FString::Printf(TEXT("허가되지 않은 사용자, Uid %d"), RequestUid);
+		InChattingPlayerController->ClientRPCReciveMessage(NewChatMessage);
+		return;
+	}
+
+	if (TurnUid != RequestUid) {
+		NewChatMessage.Time = FDateTime::Now();
+		NewChatMessage.Sender = TEXT("Server");
+		NewChatMessage.Message = TEXT("당신의 차례가 아닙니다.");
+		InChattingPlayerController->ClientRPCReciveMessage(NewChatMessage);
+		return;
+	}
+
+	if (PlayerChance[RequestUid] >= MaxChance) {
+		NewChatMessage.Time = FDateTime::Now();
+		NewChatMessage.Sender = TEXT("Server");
+		NewChatMessage.Message = TEXT("기회를 전부 소진하셨습니다.");
+		InChattingPlayerController->ClientRPCReciveMessage(NewChatMessage);
+		return;
+	}
+
+	int32 CurrentChance = ++PlayerChance[RequestUid];
+	FBaseBallResult Result = GetBaseBallResult(GuessNumber);
 	NewChatMessage.Time = FDateTime::Now();
 	NewChatMessage.Sender = FString::Printf(TEXT("Player %d"), BBPS->Uid);
-	NewChatMessage.Message = InChatMessageString;
+	NewChatMessage.Message = FString::Printf(TEXT("%d -> %s ( %d / %d )"), GuessNumber, *GetResultString(Result), CurrentChance, MaxChance);
 	SendChatMessage(NewChatMessage);
+
+	if (Result.Strike == MaxSecretNumberLength) {
+		SendNoticeMessage(FText::FromString(FString::Printf(TEXT("승리자 Player %d"), BBPS->Uid)));
+		ResetGame();
+	} else if (!IsGameContinue()) {
+		SendNoticeMessage(FText::FromString(TEXT("무승부, 새 게임을 시작합니다.")));
+		ResetGame();
+	}
+
+	TurnChange(BBPS->Uid);
 }
 
 FBaseBallResult ABaseBallGameMode::GetBaseBallResult(const int32& GuessNumber)
