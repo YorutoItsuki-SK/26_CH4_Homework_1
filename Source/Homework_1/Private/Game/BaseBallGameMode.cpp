@@ -73,6 +73,19 @@ void ABaseBallGameMode::BroadcastNewChat(ABaseBallPlayerController* InChattingPl
 
 	if (!BBPS) return;
 
+	if (!IsGuessNumberString(InChatMessageString)) {
+		//일반 채팅 처리
+		FChatMessage NewChatMessage;
+		NewChatMessage.Time = FDateTime::Now();
+		NewChatMessage.Sender = FString::Printf(TEXT("Player %d"), BBPS->Uid);
+		NewChatMessage.Message = InChatMessageString;
+
+		SendChatMessage(NewChatMessage);
+		return;
+	}
+
+	ProcessGuessRequest(InChattingPlayerController, FCString::Atoi(*InChatMessageString));
+}
 void ABaseBallGameMode::SendChatMessage(FChatMessage& NewChatMessage)
 {
 	for (ABaseBallPlayerController* BBPC : AllPlayerControllers) {
