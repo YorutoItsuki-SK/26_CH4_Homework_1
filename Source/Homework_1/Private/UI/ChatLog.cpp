@@ -9,24 +9,33 @@
 #include "Blueprint/WidgetTree.h"
 
 #include "Game/BaseBallGameState.h"
+#include "Player/BaseBallPlayerController.h"
+#include "Player/BaseBallPlayerState.h"
 
 void UChatLog::NativeConstruct()
 {
 	Super::NativeConstruct();
-	ABaseBallGameState* BBGameState = GetWorld()->GetGameState<ABaseBallGameState>();
-	if (!BBGameState) return;
 
-	ChatHandle = BBGameState->OnChatChanged.AddUObject(this, &UChatLog::ReciveChat);
+	APlayerController* PCRaw = GetOwningPlayer();
+	if (PCRaw) {
+		ABaseBallPlayerController* BBPC = Cast<ABaseBallPlayerController>(PCRaw);
+		if (BBPC) {
+			ChatHandle = BBPC->OnChatRecived.AddUObject(this, &UChatLog::ReciveChat);
+		}
+	}
+
 }
 
 void UChatLog::NativeDestruct()
 {
 	Super::NativeDestruct();
-
-	ABaseBallGameState* BBGameState = GetWorld()->GetGameState<ABaseBallGameState>();
-	if (!BBGameState) return;
-
-	BBGameState->OnChatChanged.Remove(ChatHandle);
+	APlayerController* PCRaw = GetOwningPlayer();
+	if (PCRaw) {
+		ABaseBallPlayerController* BBPC = Cast<ABaseBallPlayerController>(PCRaw);
+		if (BBPC) {
+			BBPC->OnChatRecived.Remove(ChatHandle);
+		}
+	}
 }
 
 void UChatLog::ReciveChat(FChatMessage InChat)
