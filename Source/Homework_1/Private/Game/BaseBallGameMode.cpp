@@ -173,10 +173,37 @@ void ABaseBallGameMode::SendChatMessage(FChatMessage& NewChatMessage)
 {
 	if (!BBGS) {
 		UE_LOG(LogTemp, Error, TEXT("ABaseBallGameMode::SendChatMessage, GameState is Null"));
+void ABaseBallGameMode::TurnChange(const int32& CurreuntUid)
+{
+	FChatMessage TurnChangeMessage;
+	TurnChangeMessage.Time = FDateTime::Now();
+	TurnChangeMessage.Sender = TEXT("Server");
+	int32 CurreuntUidIndex = PlayerUids.IndexOfByKey(CurreuntUid);
+	if (CurreuntUidIndex < 0) {
+		if (PlayerUids.IsEmpty()) {
+			TurnUid = 0;
+			TurnChangeMessage.Message = TEXT("턴 초기화");
+		}
+		else {
+			TurnUid = PlayerUids[0];
+			TurnChangeMessage.Message = FString::Printf(TEXT("턴 재설정, 현재 턴 : Player %d"), TurnUid);
+		}
+		SendChatMessage(TurnChangeMessage);
 		return;
 	}
 
-	BBGS->CurrentChat = NewChatMessage;
+	CurreuntUidIndex++;
+	if (PlayerUids.IsValidIndex(CurreuntUidIndex)) {
+		TurnUid = PlayerUids[CurreuntUidIndex];
+	}
+	else if (PlayerUids.IsEmpty()) {
+		TurnUid = 0;
+	}
+	else {
+		TurnUid = PlayerUids[0];
+	}
+	TurnChangeMessage.Message = FString::Printf(TEXT("현재 턴 : Player %d"), TurnUid);
+	SendChatMessage(TurnChangeMessage);
 }
 
 bool ABaseBallGameMode::IsGameContinue()
