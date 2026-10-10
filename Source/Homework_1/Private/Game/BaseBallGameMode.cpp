@@ -50,11 +50,20 @@ void ABaseBallGameMode::Logout(AController* LeavingPlayer)
 	ABaseBallPlayerState* BBPS = BBPC->GetPlayerState<ABaseBallPlayerState>();
 	if (!BBPS) return;
 
+	if (TurnUid == BBPS->Uid) {
+		TurnChange(BBPS->Uid);
+	}
+
+	PlayerChance.Remove(BBPS->Uid);
+	PlayerUids.Remove(BBPS->Uid);
+
 	FChatMessage NewChatMessage;
 	NewChatMessage.Time = FDateTime::Now();
-	NewChatMessage.Sender = "Server";
+	NewChatMessage.Sender = TEXT("Server");
 	NewChatMessage.Message = FString::Printf(TEXT("Player %d has Logout"), BBPS->Uid);
 	SendChatMessage(NewChatMessage);
+
+	IsGameContinue();
 }
 
 void ABaseBallGameMode::BroadcastNewChat(ABaseBallPlayerController* InChattingPlayerController, const FString& InChatMessageString)
