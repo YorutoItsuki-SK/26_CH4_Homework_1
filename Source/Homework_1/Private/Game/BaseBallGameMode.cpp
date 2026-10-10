@@ -73,6 +73,30 @@ void ABaseBallGameMode::BroadcastNewChat(ABaseBallPlayerController* InChattingPl
 
 	if (!BBPS) return;
 
+int32 ABaseBallGameMode::GeneratedSecretNumber()
+{
+	TArray<int32> Numbers;
+	for (int32 i = 1; i <= 9; i++) {
+		Numbers.Push(i);
+	}
+
+	FMath::RandInit(FDateTime::Now().GetTicks());
+	int32 SecretNumberInit = 0;
+
+	for (int32 I = 0; I < MaxSecretNumberLength; I++) {
+		SecretNumberInit *= 10;
+		int32 Index = FMath::RandRange(0, (Numbers.Num() - 1));
+		int32 PickedNumber = Numbers[Index];
+		SecretNumberSet.Add(PickedNumber);
+		SecretNumberInit += PickedNumber;
+		Numbers.RemoveAt(Index);
+	}
+
+	UE_LOG(LogTemp, Error, TEXT("SecretNumber : %d"), SecretNumberInit);
+
+	return SecretNumberInit;
+}
+
 bool ABaseBallGameMode::IsGuessNumberString(const FString& InNumberString)
 {
 	if (InNumberString.Len() != MaxSecretNumberLength) return false;
