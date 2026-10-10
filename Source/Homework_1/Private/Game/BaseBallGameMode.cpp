@@ -132,14 +132,41 @@ bool ABaseBallGameMode::IsGuessNumberString(const FString& InNumberString)
 	SendChatMessage(NewChatMessage);
 }
 
-void ABaseBallGameMode::BeginPlay()
+FBaseBallResult ABaseBallGameMode::GetBaseBallResult(const int32& GuessNumber)
 {
-	Super::BeginPlay();
+	FBaseBallResult Result = { 0,0 };
 
-	ABaseBallGameState* BBGameState = GetGameState<ABaseBallGameState>();
-	if (BBGameState) {
-		BBGS = BBGameState;
+	UE_LOG(LogTemp, Error, TEXT("ABaseBallGameMode::GetBaseBallResult, SN : %d, GN : %d"), SecretNumber, GuessNumber);
+	if (GuessNumber == SecretNumber) {
+		Result.Strike = MaxSecretNumberLength;
+		return Result;
 	}
+	UE_LOG(LogTemp, Error, TEXT("ABaseBallGameMode::GetBaseBallResult, false"));
+
+
+	int32 GuessNumberRaw = GuessNumber;
+	int32 SecretNumberRaw = SecretNumber;
+
+	while (GuessNumberRaw > 0)
+	{
+		int32 GuessNumberE = GuessNumberRaw % 10;
+		GuessNumberRaw /= 10;
+
+		int32 SecretNumberE = SecretNumberRaw % 10;
+		SecretNumberRaw /= 10;
+
+		if (GuessNumberE == SecretNumberE) {
+			Result.Strike++;
+			continue;
+		}
+
+		if (SecretNumberSet.Contains(GuessNumberE)) {
+			Result.Ball++;
+			continue;
+		}
+	}
+
+	return Result;
 }
 
 void ABaseBallGameMode::SendChatMessage(FChatMessage& NewChatMessage)
