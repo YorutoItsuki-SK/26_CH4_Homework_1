@@ -73,6 +73,12 @@ void ABaseBallGameMode::BroadcastNewChat(ABaseBallPlayerController* InChattingPl
 
 	if (!BBPS) return;
 
+void ABaseBallGameMode::SendChatMessage(FChatMessage& NewChatMessage)
+{
+	for (ABaseBallPlayerController* BBPC : AllPlayerControllers) {
+		BBPC->ClientRPCReciveMessage(NewChatMessage);
+	}
+}
 int32 ABaseBallGameMode::GeneratedSecretNumber()
 {
 	TArray<int32> Numbers;
