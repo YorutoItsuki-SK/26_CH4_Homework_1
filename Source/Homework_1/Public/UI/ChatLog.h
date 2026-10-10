@@ -4,12 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Context/Chat.h"
 #include "ChatLog.generated.h"
 
 class UScrollBox;
 class UVerticalBox;
-
-struct FChatMessage;
 
 /**
  * 
@@ -18,6 +17,9 @@ UCLASS()
 class HOMEWORK_1_API UChatLog : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+	void AddChatToLog(const FString& Chat);
 
 protected:
 	FDelegateHandle ChatHandle;
@@ -36,6 +38,4 @@ protected:
 protected:
 	UFUNCTION()
 	void ReciveChat(FChatMessage InChat);
-
-	void AddChatToLog(const FString& Chat);
 };
