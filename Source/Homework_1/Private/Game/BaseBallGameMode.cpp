@@ -157,7 +157,12 @@ int32 ABaseBallGameMode::GeneratedSecretNumber()
 	return 0;
 }
 
-bool ABaseBallGameMode::IsGuessNumberString(const FString& InNumberString)
+void ABaseBallGameMode::ResetGame()
 {
-	return false;
+	for (auto& Itr : PlayerChance) {
+		Itr.Value = 0;
+	}
+	SecretNumberSet.Empty();
+	SecretNumber = GeneratedSecretNumber();
 }
+
