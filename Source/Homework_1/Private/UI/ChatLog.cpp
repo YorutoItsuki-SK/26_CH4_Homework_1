@@ -55,6 +55,9 @@ void UChatLog::AddChatToLog(const FString& Chat)
 
 	if (!NewChat) return;
 	NewChat->SetText(FText::FromString(Chat));
+	NewChat->SetAutoWrapText(true);
+	NewChat->SetWrapTextAt(0.f);
+	NewChat->SetWrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping);
 
 	ChatLogBox->AddChildToVerticalBox(NewChat);
 
