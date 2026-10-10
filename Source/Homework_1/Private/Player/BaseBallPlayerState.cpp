@@ -15,4 +15,6 @@ void ABaseBallPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass, Uid);
+	DOREPLIFETIME(ThisClass, CurrentGuess);
+	DOREPLIFETIME(ThisClass, MaxGuess);
 }

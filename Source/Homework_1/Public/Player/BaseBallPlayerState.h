@@ -21,5 +21,11 @@ public:
 	
 public:
 	UPROPERTY(Replicated)
-	int32 Uid;
+	int32 Uid = -1;
+
+	UPROPERTY(Replicated)
+	int32 CurrentGuess = 0;
+
+	UPROPERTY(Replicated)
+	int32 MaxGuess = 0;
 };
