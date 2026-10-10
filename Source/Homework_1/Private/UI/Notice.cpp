@@ -46,3 +46,22 @@ void UNotice::NativeDestruct()
 		}
 	}
 }
+
+void UNotice::UpdateNotice(FText InNotice)
+{
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	if (World->GetTimerManager().IsTimerActive(NoticeTimerHandle)) {
+		World->GetTimerManager().ClearTimer(NoticeTimerHandle);
+	}
+	NoticeTextBlock->SetText(InNotice);
+	NoticeTextBlock->SetVisibility(ESlateVisibility::Visible);
+
+	World->GetTimerManager().SetTimer(NoticeTimerHandle, this, &UNotice::SetNoticeCollapse, 5.f, false);
+}
+
+void UNotice::SetNoticeCollapse()
+{
+	NoticeTextBlock->SetVisibility(ESlateVisibility::Collapsed);
+}
