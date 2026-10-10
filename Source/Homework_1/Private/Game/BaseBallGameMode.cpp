@@ -79,6 +79,14 @@ void ABaseBallGameMode::SendChatMessage(FChatMessage& NewChatMessage)
 		BBPC->ClientRPCReciveMessage(NewChatMessage);
 	}
 }
+
+void ABaseBallGameMode::SendNoticeMessage(const FText& InNotice)
+{
+	for (ABaseBallPlayerController* BBPC : AllPlayerControllers) {
+		BBPC->ClientRPCReciveNotice(InNotice);
+	}
+}
+
 int32 ABaseBallGameMode::GeneratedSecretNumber()
 {
 	TArray<int32> Numbers;
