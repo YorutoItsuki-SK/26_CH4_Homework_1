@@ -73,6 +73,20 @@ void ABaseBallGameMode::BroadcastNewChat(ABaseBallPlayerController* InChattingPl
 
 	if (!BBPS) return;
 
+bool ABaseBallGameMode::IsGuessNumberString(const FString& InNumberString)
+{
+	if (InNumberString.Len() != MaxSecretNumberLength) return false;
+	TSet<int32> UniqueNumberSet;
+
+	for (TCHAR C : InNumberString) {
+		if (!FChar::IsDigit(C) || C == '0') return false;
+		
+		if (UniqueNumberSet.Contains(C)) return false;
+		UniqueNumberSet.Add(C);
+	}
+
+	return true;
+}
 	FChatMessage NewChatMessage;
 	NewChatMessage.Time = FDateTime::Now();
 	NewChatMessage.Sender = FString::Printf(TEXT("Player %d"), BBPS->Uid);
