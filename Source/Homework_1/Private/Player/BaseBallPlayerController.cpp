@@ -18,6 +18,16 @@ void ABaseBallPlayerController::ServerRPCSendMessage_Implementation(const FStrin
 	BBGM->BroadcastNewChat(this, InChatMessageString);
 }
 
+void ABaseBallPlayerController::ClientRPCReciveMessage_Implementation(const FChatMessage& InMessage)
+{
+	OnChatRecived.Broadcast(InMessage);
+}
+
+void ABaseBallPlayerController::ClientRPCReciveNotice_Implementation(const FText& InNotice)
+{
+	OnNoticeRecived.Broadcast(InNotice);
+}
+
 void ABaseBallPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
