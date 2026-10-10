@@ -25,9 +25,17 @@ void ABaseBallGameMode::OnPostLogin(AController* NewPlayer)
 
 	FChatMessage NewChatMessage;
 	NewChatMessage.Time = FDateTime::Now();
-	NewChatMessage.Sender = "Server";
+	NewChatMessage.Sender = TEXT("Server");
 	NewChatMessage.Message = FString::Printf(TEXT("Player %d has joined"), Uid);
 	SendChatMessage(NewChatMessage);
+
+	//플레이어 기본 찬스 설정
+	PlayerChance.Add({ Uid, 0 });
+	PlayerUids.Push(Uid);
+
+	if (TurnUid < 1) {
+		TurnUid = Uid;
+	}
 }
 
 void ABaseBallGameMode::Logout(AController* LeavingPlayer)
